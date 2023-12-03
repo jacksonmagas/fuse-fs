@@ -1,0 +1,53 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROC_CWD	/home/jackson/cs3650/project-2/helpers/	//
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	5.9.0	//
+BITMAP_H	bitmap.h	/^#define BITMAP_H$/;"	d
+BLOCKS_H	blocks.h	/^#define BLOCKS_H$/;"	d
+BLOCK_BITMAP_SIZE	blocks.c	/^const int BLOCK_BITMAP_SIZE = BLOCK_COUNT \/ 8;$/;"	v	typeref:typename:const int
+BLOCK_BITMAP_SIZE	blocks.h	/^const int BLOCK_BITMAP_SIZE; \/\/ default = 256 \/ 8 = 32$/;"	v	typeref:typename:const int
+BLOCK_COUNT	blocks.c	/^const int BLOCK_COUNT = 256; \/\/ we split the "disk" into 256 blocks$/;"	v	typeref:typename:const int
+BLOCK_COUNT	blocks.h	/^const int BLOCK_COUNT; \/\/ we split the "disk" into blocks (default = 256)$/;"	v	typeref:typename:const int
+BLOCK_SIZE	blocks.c	/^const int BLOCK_SIZE = 4096; \/\/ = 4K$/;"	v	typeref:typename:const int
+BLOCK_SIZE	blocks.h	/^const int BLOCK_SIZE;  \/\/ default = 4K$/;"	v	typeref:typename:const int
+NUFS_SIZE	blocks.c	/^const int NUFS_SIZE = BLOCK_SIZE * BLOCK_COUNT; \/\/ = 1MB$/;"	v	typeref:typename:const int
+NUFS_SIZE	blocks.h	/^const int NUFS_SIZE;   \/\/ default = 1MB$/;"	v	typeref:typename:const int
+SIZE	bitmap_test.c	/^#define SIZE /;"	d	file:
+SLIST_H	slist.h	/^#define SLIST_H$/;"	d
+TEST_NAME	blocks_test.c	/^#define TEST_NAME /;"	d	file:
+_GNU_SOURCE	blocks.c	/^#define _GNU_SOURCE$/;"	d	file:
+alloc_block	blocks.c	/^int alloc_block() {$/;"	f	typeref:typename:int
+bit_index	bitmap.c	/^#define bit_index(/;"	d	file:
+bitmap_get	bitmap.c	/^int bitmap_get(void *bm, int i) {$/;"	f	typeref:typename:int
+bitmap_print	bitmap.c	/^void bitmap_print(void *bm, int size) {$/;"	f	typeref:typename:void
+bitmap_put	bitmap.c	/^void bitmap_put(void *bm, int i, int v) {$/;"	f	typeref:typename:void
+blocks_base	blocks.c	/^static void *blocks_base = 0;$/;"	v	typeref:typename:void *	file:
+blocks_fd	blocks.c	/^static int blocks_fd = -1;$/;"	v	typeref:typename:int	file:
+blocks_free	blocks.c	/^void blocks_free() {$/;"	f	typeref:typename:void
+blocks_get_block	blocks.c	/^void *blocks_get_block(int bnum) { return blocks_base + BLOCK_SIZE * bnum; }$/;"	f	typeref:typename:void *
+blocks_init	blocks.c	/^void blocks_init(const char *image_path) {$/;"	f	typeref:typename:void
+byte_index	bitmap.c	/^#define byte_index(/;"	d	file:
+bytes_to_blocks	blocks.c	/^int bytes_to_blocks(int bytes) {$/;"	f	typeref:typename:int
+data	slist.h	/^  char *data;$/;"	m	struct:slist	typeref:typename:char *
+free_block	blocks.c	/^void free_block(int bnum) {$/;"	f	typeref:typename:void
+get_blocks_bitmap	blocks.c	/^void *get_blocks_bitmap() { return blocks_get_block(0); }$/;"	f	typeref:typename:void *
+get_inode_bitmap	blocks.c	/^void *get_inode_bitmap() {$/;"	f	typeref:typename:void *
+main	bitmap_test.c	/^int main(int argc, char **argv) {$/;"	f	typeref:typename:int
+main	blocks_test.c	/^int main(int argc, char **argv) {$/;"	f	typeref:typename:int
+main	slist_test.c	/^int main(int argc, char **argv) {$/;"	f	typeref:typename:int
+next	slist.h	/^  struct slist *next;$/;"	m	struct:slist	typeref:struct:slist *
+nth_bit_mask	bitmap.c	/^#define nth_bit_mask(/;"	d	file:
+print_list	slist_test.c	/^void print_list(slist_t *list) {$/;"	f	typeref:typename:void
+refs	slist.h	/^  int refs;$/;"	m	struct:slist	typeref:typename:int
+s_cons	slist.c	/^slist_t *s_cons(const char *text, slist_t *rest) {$/;"	f	typeref:typename:slist_t *
+s_explode	slist.c	/^slist_t *s_explode(const char *text, char delim) {$/;"	f	typeref:typename:slist_t *
+s_free	slist.c	/^void s_free(slist_t *xs) {$/;"	f	typeref:typename:void
+slist	slist.h	/^typedef struct slist {$/;"	s
+slist_t	slist.h	/^} slist_t;$/;"	t	typeref:struct:slist
