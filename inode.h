@@ -6,7 +6,7 @@
 #ifndef INODE_H
 #define INODE_H
 
-#include "blocks.h"
+#include "helpers/blocks.h"
 
 typedef struct inode {
   int refs;  // reference count

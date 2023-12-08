@@ -14,6 +14,7 @@
 #define bit_index(n) ((n) % 8)
 
 // Get the given bit from the bitmap.
+// returns true if the bit is one
 int bitmap_get(void *bm, int i) {
   uint8_t *base = (uint8_t *) bm;
 

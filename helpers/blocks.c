@@ -67,11 +67,15 @@ void blocks_free() {
 }
 
 // Get the given block, returning a pointer to its start.
-void *blocks_get_block(int bnum) { return blocks_base + BLOCK_SIZE * bnum; }
+void *blocks_get_block(int bnum) {
+  return blocks_base + BLOCK_SIZE * bnum; 
+}
 
 // Return a pointer to the beginning of the block bitmap.
 // The size is BLOCK_BITMAP_SIZE bytes.
-void *get_blocks_bitmap() { return blocks_get_block(0); }
+void *get_blocks_bitmap() {
+  return blocks_get_block(0);
+}
 
 // Return a pointer to the beginning of the inode table bitmap.
 void *get_inode_bitmap() {
