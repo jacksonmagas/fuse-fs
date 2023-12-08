@@ -104,5 +104,7 @@ int alloc_block() {
 void free_block(int bnum) {
   printf("+ free_block(%d)\n", bnum);
   void *bbm = get_blocks_bitmap();
-  bitmap_put(bbm, bnum, 0);
+  if (bnum >= 0 && bnum < BLOCK_COUNT) {
+    bitmap_put(bbm, bnum, 0);
+  }
 }
