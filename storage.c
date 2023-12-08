@@ -41,22 +41,22 @@ int storage_read(const char *path, char *buf, size_t n, size_t size, off_t offse
     
 
     while (amt_done < n & amt_done < size) {
-      int read_bnum = inode_get_bnum(inode, offset + amt_done);
+      int read_bnum = inode_get_bnum(path_inode, offset + amt_done);
       char *read_p = blocks_get_block(read_bnum);
       move_p = i % BLOCK_SIZE;
       read_p += move_p;
       
       int amt_doing = 0;
-      if (left < BLOCK_SIZE - move_p) {
+      if (amt_left < BLOCK_SIZE - move_p) {
         amt_doing = amt_left;  
       } else {
         amt_doing = BLOCK_SIZE - move_p;
       }
       
       memcpy(buf + amt_done, read_p, amt_doing);
-      i = i + doing;
+      i = i + amt_doing;
       amt_done = amt_done + doing;
-      amt_left = amt_left - doing;
+      amt_left = amt_left - amt_doing;
     }
 
     return 0;
@@ -71,6 +71,30 @@ int storage_write(const char *path, const char *buf, size_t n, off_t offset) {
   int path_truncate = storage_truncate(path, offset + size);
   if (path_inum > 0 & path_truncate > 0) {
     inode *path_node = get_inode(path_inum);
+
+    int i = offset;
+    int amt_done = 0;
+    int amt_left = n;
+
+
+    while (amt_done < n & amt_done < size) {
+      int write_bnum = inode_get_bnum(path_inode, offset + amt_done);
+      char *write_p = blocks_get_block(write_bnum);
+      int move_p = i % BLOCK_SIZE;
+      write_p += move_p;
+
+      int amt_doing = 0;
+      if (amt_left < BLOCK_SIZE - move_p) {
+        amt_doing = amt_left;
+      } else {
+        amt_doing = BLOCK_SIZE - move_p;
+      }
+
+      memcpy(write_p, buf + amt_done, amt_doing);
+      i = i + amt_doing;
+      amt_done = amt_done + doing;
+      amt_left = amt_left - doing;
+    }
 
     return 0;
   }
@@ -105,21 +129,37 @@ int storage_mknod(const char *path, int mode) {
 
 }
 
+// Takes a path and isolates the filename from the full directory path
+void iso_filename(const char* path, char* dir, char* filename) {
+    slist* split_path = s_split(path, '/');
+
+    while (split_path->next != NULL) {
+	char *add_string = strncat("/", split_path->data, 128);
+        strncat(dir, add_string, 129);
+        split_path = split_path->next;
+    }
+
+    char *path_rest = split_path->data;
+    memcpy(filename, path_rest, strlen(path_rest));
+    
+    s_free(split_path);
+}
+
 // Remove the file or directory at the given path
 int storage_unlink(const char *path) {
   int path_inum = 0; // lookup(path) method to get inum from path
   if (path_inum > 0) {
-    char* parent_path = malloc(strnlen(from);
-    char* child_path = malloc(strnlen(128));
+    char* dir = malloc(strnlen(path);
+    char* filename = malloc(strnlen(128));
     
-    // Update parent and child paths
+    iso_filename(dir, filename);
 
-    int parent_inum = 0; // lookup(parent_path)
-    inode *parent_inode = get_inode(parent_inum);
-    int ret = directory_delete(parent_inode, child_path);
+    int dir_inum = 0; // lookup(parent_path)
+    inode *dir_inode = get_inode(dir_inum);
+    int ret = directory_delete(dir_inode, filename);
 
-    free(parent_path);
-    free(child_path);
+    free(dir);
+    free(filename);
     return ret;
   }
 
@@ -131,17 +171,17 @@ int storage_link(const char *from, const char *to) {
   int from_inum = 0; // lookup(from) method to get inum from path
   int to_inum = 0; // lookup(to) method to get inum from path
   if (from_inum > 0 & to_inum > 0) {
-    char* parent_path = malloc(strnlen(from);
-    char* child_path = malloc(strnlen(128));
+    char* dir = malloc(strnlen(from);
+    char* filename = malloc(strnlen(128));
 
-    // Update parent and child paths
+    iso_filename(dir, filename);
 
-    int parent_inum = 0 // lookup(parent_path)
-    inode *parent_inode = get_inode(parent_inum);
-    int ret = directory_put(parent_inode, child_path, inum);
+    int dir_inum = 0 // lookup(dir)
+    inode *dir_inode = get_inode(dir_inum);
+    int ret = directory_put(dir_inode, filename, inum);
 
-    free(parent_path);
-    free(child_path);
+    free(dir);
+    free(filename);
     return ret;
   }
 
