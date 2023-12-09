@@ -8,9 +8,10 @@
 
 #include "helpers/blocks.h"
 #include <time.h>
+#include <stdlib.h>
 
 const int NUM_INODE_BLOCKS = 3;
-const int NUM_DIRECT_BLOCKS = 12;
+#define NUM_DIRECT_BLOCKS = 12;
 
 typedef struct inode {
   int refs;  // reference count
