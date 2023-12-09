@@ -19,10 +19,12 @@
 
 #include "bitmap.h"
 #include "blocks.h"
+#include "inode.h"
 
 const int BLOCK_COUNT = 256; // we split the "disk" into 256 blocks
 const int BLOCK_SIZE = 4096; // = 4K
 const int NUFS_SIZE = BLOCK_SIZE * BLOCK_COUNT; // = 1MB
+const int INODE_COUNT = BLOCK_SIZE / sizeof(inode_t) * NUM_INODE_BLOCKS;
 
 const int BLOCK_BITMAP_SIZE = BLOCK_COUNT / 8;
 // Note: assumes block count is divisible by 8
@@ -43,6 +45,7 @@ int bytes_to_blocks(int bytes) {
 
 // Load and initialize the given disk image.
 void blocks_init(const char *image_path) {
+
   blocks_fd = open(image_path, O_CREAT | O_RDWR, 0644);
   assert(blocks_fd != -1);
 
@@ -74,15 +77,20 @@ void *blocks_get_block(int bnum) {
 // Return a pointer to the beginning of the block bitmap.
 // The size is BLOCK_BITMAP_SIZE bytes.
 void *get_blocks_bitmap() {
-  return blocks_get_block(0);
+  void* bbm = blocks_get_block(0);
+  printf("get_blocks_bitmap called with bitmap: \n");
+  bitmap_print(bbm, BLOCK_COUNT);
+  return bbm;
 }
 
 // Return a pointer to the beginning of the inode table bitmap.
 void *get_inode_bitmap() {
   uint8_t *block = blocks_get_block(0);
-
+  void* ibm = (void*) (block + BLOCK_BITMAP_SIZE);
+  printf("get_inode_bitmap called with bitmap: \n");
+  bitmap_print(ibm, INODE_COUNT);
   // The inode bitmap is stored immediately after the block bitmap
-  return (void *) (block + BLOCK_BITMAP_SIZE);
+  return ibm;
 }
 
 // Allocate a new block and return its index.

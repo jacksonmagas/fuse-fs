@@ -8,12 +8,13 @@
 
 // Initialize the storage for the file system
 void storage_init(const char *path) {
+  printf("initialize storage with %s as data file", path);
   // Initialize the data blocks
   blocks_init(path);   
 
-  // Permanently set aside 3 data blocks for inode_ts
+  // Permanently set aside blocks 2, 3, 4 as inode table blocks
   for (int i = 0; i < NUM_INODE_BLOCKS; i++) {
-    int perm_block = alloc_block();
+    alloc_block();
   }
   printf("allocate root");
   // allocate inode_t for root by giving it a non-existant parent
@@ -24,25 +25,27 @@ void storage_init(const char *path) {
 // Get the inum at a given path
 int get_inum(const char *path) {
   printf("get_inum of %s", path);
-  if (strcmp(path, "\\")) {
-    printf(" = %d\n", 0);
+  if (strncmp(path, "/", 4) == 0) {
+    printf(" = 0 because path is /");
     return 0;
   }
   // start from root directory which is inum 0
   int inum = 0;
   slist_t *split_path = directory_list(path);
+  slist_t* whole_list = split_path;
   
   while (split_path != NULL) {
-    inum = directory_lookup(get_inode(inum), split_path->data);
+    printf("looking for %s in inode %d -> ", split_path->data, inum);
+    inum = directory_lookup(inum, split_path->data);
     if (inum < 0) {
-      s_free(split_path);
-      printf(" = %d\n. %s not found or parent not a dir", -1, split_path->data);
+      printf(" = %d. %s not found or parent not a dir", -1, split_path->data);
+      s_free(whole_list);
       return -1;
     }
     split_path = split_path->next;
   }
 
-  s_free(split_path);
+  s_free(whole_list);
   return inum;
 }
 

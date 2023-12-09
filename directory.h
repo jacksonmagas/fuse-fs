@@ -27,7 +27,7 @@ int directory_init(int parent);
 // param di: pointer to the directory inode
 // param name: the name of the file or directory
 // returns: the inum if found, otherwise -1
-int directory_lookup(inode_t *di, const char *name);
+int directory_lookup(int dir_inum, const char *name);
 
 // add a new directory entry with the given name in the given directory
 // param di: inode number of the directory

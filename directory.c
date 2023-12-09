@@ -7,6 +7,7 @@
 #include <string.h>
 
 int directory_init(int parent) {
+  printf("allocate inode for new directory with parent %d\n", -1);
   int inum = alloc_inode(40755);
   directory_link(inum, ".", inum);
   // for non-root directories
@@ -30,6 +31,7 @@ int directory_put(int di, const char *name, int mode) {
 
 // directory inodes store the bits
 int directory_link(int di, const char* name, int target) {
+  printf("link name %s to inode %d in directory %d\n", name, target, di);
   void* bmap = get_inode_bitmap();
   if (bitmap_get(bmap, target)) {
     // get pointer to new directory entry
@@ -43,9 +45,16 @@ int directory_link(int di, const char* name, int target) {
 }
 
 // Get the inum of the file or directory with the given name in the given inode
-int directory_lookup(inode_t *di, const char *name) {
+// empty string returns parent inum
+int directory_lookup(int dir_inum, const char *name) {
+  printf("directory_lookup of %s", name);
+  inode_t* di = get_inode(dir_inum);
   dirent_t *dirs = blocks_get_block(di->block[0]);
   
+  if (strnlen(name, 4) == 0) {
+    return dir_inum;
+  }
+
   for (int i = 0; i < di->size / sizeof(dirent_t); i++) {
     if (strncmp(name, dirs[i].name, 128) == 0) {
       return dirs[i].inum;

@@ -28,15 +28,17 @@ inode_t *get_inode(int inum) {
 
 int alloc_inode(int mode) {
   int inum = first_free_inode();
+  bitmap_put(get_inode_bitmap(), inum, 1);
   inode_t* new_node = get_inode(inum);
   new_node->block[0] = alloc_block();
+  new_node->num_blocks = 1;
   new_node->mode = mode;
   return inum;
 }
 
 // returns in inum of the first free inode, and -1 if there are no free inodes
 int first_free_inode() {
-  void* inode_bitmap = get_inode_bitmap;
+  void* inode_bitmap = get_inode_bitmap();
   // loop over each inode in the bitmap
   for (int i = 0; i < (BLOCK_SIZE / sizeof(inode_t)) * NUM_INODE_BLOCKS; i++) {
     if (!bitmap_get(inode_bitmap, i)) {
@@ -46,7 +48,8 @@ int first_free_inode() {
   return -1;
 }
 
-// decrease reference count
+// decrease reference count, and if the count hits 0 free the inode by setting fields back to 0, freeing used blocks, and updating the bitmap
+// 
 void free_inode(int inum) {
   inode_t node = *get_inode(inum);
   if (node.refs > 1) {
@@ -56,11 +59,22 @@ void free_inode(int inum) {
     node.refs = 0;
     node.mode = 0;
     node.size = 0;
+    int* indirect_block = (int*) blocks_get_block(node.indirect_block);
+    // free all blocks indirectly pointed to
+    while (node.num_blocks > NUM_DIRECT_BLOCKS) {
+      free_block(indirect_block[node.num_blocks - NUM_DIRECT_BLOCKS - 1]);
+      node.num_blocks--;
+    }
+    // free indirect block
+    free_block(node.indirect_block);
     node.indirect_block = -1; 
+    // free direct blocks
     for (int i = 0; i < NUM_DIRECT_BLOCKS; i++) {
       free_block(node.block[i]);
       node.block[i] = -1;
+      node.num_blocks--;
     }
+    bitmap_put(get_inode_bitmap(), inum, 0);
   }
 }
 

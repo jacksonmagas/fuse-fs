@@ -47,4 +47,5 @@ void bitmap_print(void *bm, int size) {
       putchar(' ');
     }
   }
+  putchar('\n');
 }
