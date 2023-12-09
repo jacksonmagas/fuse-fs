@@ -4,15 +4,8 @@
 
 int directory_init(inum parent) {
   int inum = alloc_inode(40755);
-  inode_t* dir_node = get_inode(inum);
-  dirent_t self;
-  dirent_t parent_dir;
-  self.name = ".";
-  parent_dir.name = "..";
-  self.inum = inum;
-  parent_dir.inum = parent;
-  inode_write(inum, (char*) &self, sizeof(dirent_t), dir_node->size);
-  inode_write(inum, (char*) &parent, sizeof(dirent_t), dir_node->size);
+  directory_link(inum, ".", inum);
+  directoy_link(inum, "..", parent);
   return inum;
 }
 
@@ -25,8 +18,17 @@ int directory_put(inum di, const char *name, int mode) {
   } else {
     inum = alloc_inode(mode);
   }
-  dirent_t entry;
-  entry.name = name;
-  entry.inum = inum;
-  inode_write(entry, (char*) &self, sizeof(dirent_t), get_inode(di)->size);
+  return directory_link(di, name, inum);
+}
+
+int directory_link(inum di, const char* name, inum target) {
+  void* bmap = get_inode_bitmap();
+  if (bitmap_get(target)) {
+    dirent_t *entry = malloc(sizeof(dirent_t));
+    entry->name = name;
+    entry->inum = target;
+    inode_write(di, (char*) entry, sizeof(dirent_t), get_inode(di)->size);
+    free(entry);
+  }
+  return -1;
 }

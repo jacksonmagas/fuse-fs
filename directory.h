@@ -36,6 +36,13 @@ int directory_lookup(inode_t *di, const char *name);
 // returns the inode number of the new directory if successful and -1 if unsuccessful
 int directory_put(inum di, const char *name, int mode);
 
+// add a new hard link with the given name to the given inode
+// param di: the directory to put the link in
+// param name: the name of the hard link
+// param target: the inode number to link to
+// returns: the inode number of the target if it exists, otherwise -1
+int directory_link(inum di, const char *name, inum target);
+
 // delete the directory in the given inode with the given name
 // param di: the directory inode
 // param name: the directory to delete

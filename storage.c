@@ -13,13 +13,16 @@ void storage_init(const char *path) {
   for (int i = 0; i < NUM_INODE_BLOCKS; i++) {
     int perm_block = alloc_block();
   }
+
+  // allocate inode for root
+  inode_alloc(40755);
 }
 
 
 // Get the inum at a given path
 int get_inum(const char *path) {
   int inum = 0;
-  slist *split_path = directory_split(path, "/");
+  slist_t *split_path = directory_split(path, "/");
   
   while (split_path != NULL) {
     inum = directory_lookup(get_inode(inum), split_path->data);
@@ -78,7 +81,10 @@ int storage_truncate(const char *path, off_t size) {
 }
 
 // Takes a path and isolates the filename from the full directory path
-void iso_filename(const char *path, char *dir, char *filename) {
+// param path: the path to split
+// param dir_path: output buffer for parent directory path
+// param filename: the output buffer for file name
+void iso_filename(const char *path, char *dir_path, char *filename) {
     slist *split_path = directory_list(path);
 
     while (split_path->next != NULL) {
@@ -95,28 +101,14 @@ void iso_filename(const char *path, char *dir, char *filename) {
 
 // Make a new file system object (file or directory) at the given path
 int storage_mknod(const char *path, int mode) {
-  if (path_inum == -1) {
-    char *dir = malloc(strnlen(path));
-    char *filename = malloc(128);
-    iso_filename(path, dir, filename);
-
-    dir_inum = get_inum(dir);
-    if (dir_inum < 0) {
-      free(dir);
-      free(filename);   
-      return -1;
-    } else {
-      inode* dir_inode = get_inode(dir_inum);
-    }
-
-    directory_put(dir_inode, filename, mode);
-    
-    free(dir);
-    free(filename);
-    return ret;
-  }
-
-  return -1;
+  char* parent_path = malloc(sizeof(path));
+  char* filename = malloc(sizeof(path));
+  iso_filename(path, parent_path, filename);
+  int parent = get_inum(parent_path); //lookup parent inum on path
+  int result = directory_put(parent, filename, mode);
+  free(parent_path);
+  free(filename);
+  return result;
 }
 
 // Remove the file or directory at the given path
@@ -124,7 +116,7 @@ int storage_unlink(const char *path) {
   int path_inum = get_inum(path);
   if (path_inum > 0) {
     char* dir = malloc(strnlen(path);
-    char* filename = malloc(strnlen(128));
+    char* filename = malloc(strnlen(path));
     iso_filename(dir, filename);
 
     int dir_inum = get_inum(dir);
