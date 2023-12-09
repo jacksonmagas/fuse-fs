@@ -118,7 +118,7 @@ int storage_mknod(const char *path, int mode) {
 int storage_unlink(const char *path) {
   int path_inum = get_inum(path);
   if (path_inum > 0) {
-    char* dir = malloc(strnlen(path);
+    char* dir = malloc(strnlen(path));
     char* filename = malloc(strnlen(path));
     iso_filename(dir, filename);
 
@@ -138,7 +138,7 @@ int storage_unlink(const char *path) {
 int storage_link(const char *from, const char *to) {
   int to_inum = get_inum(to);
   if (to_inum > 0) {
-    char* dir = malloc(strnlen(from);
+    char* dir = malloc(strnlen(from));
     char* filename = malloc(strnlen(128));
     iso_filename(dir, filename);
 
@@ -171,6 +171,7 @@ int storage_rename(const char *from, const char *to) {
 int storage_set_time(const char *path, const struct timespec ts[2]) {
   int path_inum = get_inum(path);
   if (path_inum > 0) {
+    inode_t *path_inode = get_inode(path_inum);
     inode_t *path_inode = get_inode(inum);
     path_inode->access_time = ts[0];
     path_inode->modification_time = ts[1];
