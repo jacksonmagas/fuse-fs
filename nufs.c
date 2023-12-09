@@ -41,7 +41,7 @@ int nufs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
   struct stat st;
   int rv = 0;
   if (get_inum(path) >= 0 && get_inode(get_inum(path))->mode / 40000 = 0) {
-    print_directory(get_inode(get_inum(path)));
+    print_directory(get_inum(path));
   } else {
     rv = -1;
   } 

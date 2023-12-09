@@ -83,12 +83,12 @@ slist_t *directory_list(const char *path) {
 }
 
 // print the directory element names with 2 spaces between them 
-void print_directory(inode_t *dd) {
-  int size = dd->size;
+void print_directory(inum dd) {
+  int size = get_inode(dd)->size;
   char* entry = (char*) malloc(sizeof(dirent_t));
   for (int i = 0; i < size; i += sizeof(dirent_t)) {
     inode_read(dd, entry, sizeof(dirent_t), sizeof(dirent_t), i);
-    printf("%s  ", ((dirent_t*)entry->name));
+    printf("%s  ", ((dirent_t*)entry)->name);
   }
   free(entry);
 }
