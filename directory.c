@@ -1,6 +1,7 @@
 // directory functions
 
 #include "directory.h"
+#include "helpers/bitmap.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,10 +31,10 @@ int directory_put(int di, const char *name, int mode) {
 // directory inodes store the bits
 int directory_link(int di, const char* name, int target) {
   void* bmap = get_inode_bitmap();
-  if (bitmap_get(target)) {
+  if (bitmap_get(bmap, target)) {
     // get pointer to new directory entry
     dirent_t* entry = (dirent_t*) malloc(sizeof(dirent_t));
-    entry->name = name;
+    strncpy(entry->name, name, 128);
     entry->inum = target;
     inode_write(di, (char*) entry, sizeof(dirent_t), get_inode(di)->size);
     free(entry);
@@ -67,7 +68,7 @@ int directory_delete(inode_t *di, const char *name) {
       char* following_entries = malloc(remaining_space);
       inode_read(di, (char*) following_entries, remaining_space, remaining_space, i + sizeof(diernt_t));
       inode_write(di, (char*) following_entries, remaining_space, remaining_space, i);
-      shrink_inode(di, sizeof(dirent_t);
+      shrink_inode(di, sizeof(dirent_t));
       free(following_entries);
       free(dirs);
       return 0;
@@ -79,7 +80,7 @@ int directory_delete(inode_t *di, const char *name) {
 
 // Get a linked list of the directories on the path
 slist_t *directory_list(const char *path) {
-  return s_explode(path, "/");
+  return s_explode(path, '/');
 }
 
 // print the directory element names with 2 spaces between them 

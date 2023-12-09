@@ -53,6 +53,6 @@ int directory_delete(inode_t *di, const char *name);
 slist_t *directory_list(const char *path);
 
 // print the directory
-void print_directory(inum dd);
+void print_directory(int dd);
 
 #endif
