@@ -46,7 +46,7 @@ int directory_link(int di, const char *name, int target);
 // delete the directory in the given inode with the given name
 // param di: the directory inode
 // param name: the directory to delete
-int directory_delete(inode_t *di, const char *name);
+int directory_delete(int di, const char *name);
 
 // get a linked list of the directories on the path.
 // returns: a linked list of strings containing the directories on the path
