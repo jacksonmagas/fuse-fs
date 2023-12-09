@@ -9,6 +9,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include "storage.h"
+#include "directory.h"
+#include "inode.h"
 
 #define FUSE_USE_VERSION 26
 #include <fuse.h>
@@ -40,7 +43,7 @@ int nufs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                  off_t offset, struct fuse_file_info *fi) {
   struct stat st;
   int rv = 0;
-  if (get_inum(path) >= 0 && get_inode(get_inum(path))->mode / 40000 = 0) {
+  if (get_inum(path) >= 0 && get_inode(get_inum(path))->mode / 40000 == 0) {
     print_directory(get_inum(path));
   } else {
     rv = -1;
@@ -103,7 +106,7 @@ int nufs_chmod(const char *path, mode_t mode) {
   int rv = -1;
   rv = get_inum(path);
   if (rv != -1) {
-    get_inode(inum)->mode;
+    get_inode(rv)->mode;
   }
   printf("chmod(%s, %04o) -> %d\n", path, mode, rv);
   return rv;
@@ -140,7 +143,7 @@ int nufs_read(const char *path, char *buf, size_t size, off_t offset,
 // Actually write data
 int nufs_write(const char *path, const char *buf, size_t size, off_t offset,
                struct fuse_file_info *fi) {
-  int rv = storage_write(path, bug, size, offset);
+  int rv = storage_write(path, buf, size, offset);
   printf("write(%s, %ld bytes, @+%ld) -> %d\n", path, size, offset, rv);
   return rv;
 }
@@ -188,7 +191,7 @@ struct fuse_operations nufs_ops;
 int main(int argc, char *argv[]) {
   assert(argc > 2 && argc < 6);
   printf("TODO: mount %s as data file\n", argv[--argc]);
-  storage_init();
+  storage_init(argv[--argc]);
   nufs_init_ops(&nufs_ops);
-  return fuse_main(--argc, argv, &nufs_ops, NULL);
+  return fuse_main(argc, argv, &nufs_ops, NULL);
 }

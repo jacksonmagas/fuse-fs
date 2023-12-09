@@ -12,11 +12,16 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "slist.h"
+#include "helpers/slist.h"
 
 // initialize the file system at the given file path
 // param path: the file path as a string
 void storage_init(const char *path);
+
+// get the inode number for the given path
+// param: path: the file path to get inode number for
+// returns: the inode number or -1 if the file doesn't exist
+int get_inum(const char *path);
 
 // get the file information for the file at the specified path
 // param path: the file path as a string

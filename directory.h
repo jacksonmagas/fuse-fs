@@ -12,7 +12,7 @@
 #include "helpers/slist.h"
 
 // directory entry
-typedef struct dirent {
+typedef struct direntry {
   char name[DIR_NAME_LENGTH]; // name of the entry, up to 48 characters
   int inum; // inode number of the directory entry
   char _reserved[12]; // space reserved to allow adding more metadata without changing struct size
