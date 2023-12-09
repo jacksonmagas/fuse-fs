@@ -2,6 +2,7 @@
 
 #include "storage.h"
 #include "inode.h"
+#include "directory.h"
 #include "helpers/block.h"
 
 // Initialize the storage for the file system
@@ -14,13 +15,14 @@ void storage_init(const char *path) {
     int perm_block = alloc_block();
   }
 
-  // allocate inode for root
-  inode_alloc(40755);
+  // allocate inode for root by giving it a non-existant parent
+  directory_init(-1);
 }
 
 
 // Get the inum at a given path
 int get_inum(const char *path) {
+  // start from root directory which is inum 0
   int inum = 0;
   slist_t *split_path = directory_split(path, "/");
   
@@ -64,7 +66,7 @@ int storage_write(const char *path, const char *buf, size_t n, off_t offset) {
   return inode_write(path_inum, buf, n, size, offset);
 }
 
-// truncate the file at the given path to the given size
+// truncate the file at the given path by the given offset
 int storage_truncate(const char *path, off_t size) {
   int path_inum = get_inum(path);
   if (path_inum > 0) {
@@ -169,8 +171,8 @@ int storage_set_time(const char *path, const struct timespec ts[2]) {
   int path_inum = get_inum(path);
   if (path_inum > 0) {
     inode *path_inode = get_inode(inum);
-    time_t new_time = ts->tv_sec;
-    inode->time = new_time;
+    path_inode->access_time = ts[0];
+    path_inode->modification_time = ts[1];
     
     return 0;
   }
