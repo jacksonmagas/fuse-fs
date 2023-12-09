@@ -133,16 +133,15 @@ int storage_unlink(const char *path) {
 
 // Create a new hard link from the source path to the destination path
 int storage_link(const char *from, const char *to) {
-  int from_inum = get_inum(from);
   int to_inum = get_inum(to);
-  if (from_inum > 0 & to_inum > 0) {
+  if (to_inum > 0) {
     char* dir = malloc(strnlen(from);
     char* filename = malloc(strnlen(128));
     iso_filename(dir, filename);
 
     int dir_inum = get_inum(dir);
     inode *dir_inode = get_inode(dir_inum);
-    int ret = directory_put(dir_inode, filename);
+    int ret = directory_link(dir_inode, filename, to_inum);
 
     free(dir);
     free(filename);

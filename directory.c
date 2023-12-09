@@ -1,6 +1,7 @@
 // directory functions
 
 #include "directory.h"
+#include <stdio.h>
 
 int directory_init(inum parent) {
   int inum = alloc_inode(40755);
@@ -24,11 +25,10 @@ int directory_put(inum di, const char *name, int mode) {
 int directory_link(inum di, const char* name, inum target) {
   void* bmap = get_inode_bitmap();
   if (bitmap_get(target)) {
-    dirent_t *entry = malloc(sizeof(dirent_t));
+    dirent_t *entry = (dirent_t*) malloc(sizeof(dirent_t*));
     entry->name = name;
     entry->inum = target;
-    inode_write(di, (char*) entry, sizeof(dirent_t), get_inode(di)->size);
-    free(entry);
+    inode_write(di, (char*) entry, sizeof(dirent_t*), get_inode(di)->size);
   }
   return -1;
 }
@@ -55,4 +55,15 @@ int directory_delete(inode_t *di, const char *name) {
 // Get a linked list of the directories on the path
 slist_t *directory_list(const char *path) {
   return s_explode(path, "/");
+}
+
+// print the directory element names with 2 spaces between them 
+void print_directory(inode_t *dd) {
+  int size = dd->size;
+  char* entry = (char*) malloc(sizeof(dirent_t*));
+  for (int i = 0; i < size; i += sizeof(dirent_t)) {
+    inode_read(dd, entry, sizeof(dirent_t*), sizeof(dirent_t*), i);
+    printf("%s  ", *((dirent_t*)entry));
+  }
+  free(entry);
 }
