@@ -6,7 +6,7 @@
 #ifndef DIRECTORY_H
 #define DIRECTORY_H
 
-#define DIR_NAME_LENGTH 48
+#define DIR_NAME_LENGTH 128
 
 #include "inode.h"
 #include "helpers/slist.h"
