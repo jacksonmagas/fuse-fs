@@ -110,18 +110,18 @@ int shrink_inode(inode_t *node, int size) {
     if (node->num_blocks <= NUM_DIRECT_BLOCKS) {
       // deallocate normal block
       node->size -= size;
-      free_block(node->block[num_blocks]);
-      node->block[num_blocks] = -1;
+      free_block(node->block[node->num_blocks]);
+      node->block[node->num_blocks] = -1;
       node->num_blocks--;
     } else {
       // deallocate new block in indirect block
-      int cur_block = ((int*) blocks_get_block(node->indirect_block))[num_blocks - NUM_DIRECT_BLOCKS];
+      int cur_block = ((int*) blocks_get_block(node->indirect_block))[node->num_blocks - NUM_DIRECT_BLOCKS];
       free_block(cur_block);
       cur_block = -1;
       if (node->num_blocks == (NUM_DIRECT_BLOCKS + 1)) {
         // deallocate indirect block
         free_block(node->indirect_block);
-        node->indirect_block = next_block;
+        node->indirect_block = -1;
       }
       node->num_blocks++;
       node->size -= size;
@@ -135,7 +135,7 @@ int inode_get_bnum(inode_t *node, int file_bnum) {
     return -1;
   }
   if (file_bnum <= NUM_DIRECT_BLOCKS) {
-    return block[file_bnum];
+    return node->block[file_bnum];
   } else {
     return ((int*) blocks_get_block(node->indirect_block))[file_bnum - NUM_DIRECT_BLOCKS];
   }

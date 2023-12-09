@@ -66,7 +66,7 @@ int inode_get_bnum(inode_t *node, int file_bnum);
 // param size: the size of the buffer to read into
 // param offset: the offset of the buffer
 // returns: 0 if successful or -1 if unsuccessful;
-int inode_read(int inum, const char* buf, int n, int size, int offset);
+int inode_read(int inum, char* buf, int n, int size, int offset);
 
 // write up to n bytes into a buffer of the given size, starting from offset in the given inode
 // param inum: the inode number to write to
