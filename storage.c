@@ -1,6 +1,7 @@
 //Implementation of disc storage, including creation of bitmaps and inode_t table
 
 #include "storage.h"
+#include <string.h>
 #include "inode.h"
 #include "directory.h"
 #include "helpers/blocks.h"
@@ -87,7 +88,7 @@ int storage_truncate(const char *path, off_t size) {
 // param dir_path: output buffer for parent directory path
 // param filename: the output buffer for file name
 void iso_filename(const char *path, char *dir_path, char *filename) {
-    slist *split_path = directory_list(path);
+    slist_t *split_path = directory_list(path);
 
     while (split_path->next != NULL) {
         char *add_string = strncat("/", split_path->data, 128);
