@@ -1,6 +1,7 @@
 //Implementation of disc storage, including creation of bitmaps and inode_t table
 
 #include "storage.h"
+#include <string.h>
 #include "inode.h"
 #include "directory.h"
 #include "helpers/blocks.h"
@@ -87,16 +88,16 @@ int storage_truncate(const char *path, off_t size) {
 // param dir_path: output buffer for parent directory path
 // param filename: the output buffer for file name
 void iso_filename(const char *path, char *dir_path, char *filename) {
-    slist *split_path = directory_list(path);
+    slist_t *split_path = directory_list(path);
 
     while (split_path->next != NULL) {
         char *add_string = strncat("/", split_path->data, 128);
-        strncat(dir, add_string, 129);
+        strncat(dir_path, add_string, 129);
         split_path = split_path->next;
     }
 
     char *path_rest = split_path->data;
-    memcpy(filename, path_rest, strnlen(path_rest));
+    memcpy(filename, path_rest, strnlen(path_rest, 256));
 
     s_free(split_path);
 }
@@ -117,13 +118,12 @@ int storage_mknod(const char *path, int mode) {
 int storage_unlink(const char *path) {
   int path_inum = get_inum(path);
   if (path_inum > 0) {
-    char* dir = malloc(strnlen(path));
-    char* filename = malloc(strnlen(path));
-    iso_filename(dir, filename);
+    char* dir = malloc(strnlen(path, 256));
+    char* filename = malloc(strnlen(path, 256));
+    iso_filename(path, dir, filename);
 
     int dir_inum = get_inum(dir);
-    inode_t *dir_inode = get_inode(dir_inum);
-    int ret = directory_delete(dir_inode, filename);
+    int ret = directory_delete(dir_inum, filename);
 
     free(dir);
     free(filename);
@@ -137,8 +137,9 @@ int storage_unlink(const char *path) {
 int storage_link(const char *from, const char *to) {
   int to_inum = get_inum(to);
   if (to_inum > 0) {
-    char* dir = malloc(strnlen(from));
-    char* filename = malloc(strnlen(128));
+
+    char* dir = malloc(strnlen(from, 128));
+    char* filename = malloc(128);
     iso_filename(from, dir, filename);
 
     int dir_inum = get_inum(dir);
