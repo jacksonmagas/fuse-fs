@@ -2,18 +2,20 @@
 
 #include "directory.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-int directory_init(inum parent) {
+int directory_init(int parent) {
   int inum = alloc_inode(40755);
   directory_link(inum, ".", inum);
   // for non-root directories
   if (parent >= 0) {
-    directoy_link(inum, "..", parent);
+    directory_link(inum, "..", parent);
   }
   return inum;
 }
 
-int directory_put(inum di, const char *name, int mode) {
+int directory_put(int di, const char *name, int mode) {
   int inum;
   if (mode / 40000 == 1) {
     // if it is a directory
@@ -26,7 +28,7 @@ int directory_put(inum di, const char *name, int mode) {
 }
 
 // directory inodes store the bits
-int directory_link(inum di, const char* name, inum target) {
+int directory_link(int di, const char* name, int target) {
   void* bmap = get_inode_bitmap();
   if (bitmap_get(target)) {
     // get pointer to new directory entry
@@ -44,7 +46,7 @@ int directory_lookup(inode_t *di, const char *name) {
   dirent_t *dirs = blocks_get_block(di->block[0]);
   
   for (int i = 0; i < di->size / sizeof(dirent_t); i++) {
-    if (strncmp(name, dirs[i].name) == 0) {
+    if (strncmp(name, dirs[i].name, 128) == 0) {
       return dirs[i].inum;
     }
   }
@@ -58,7 +60,7 @@ int directory_delete(inode_t *di, const char *name) {
   for (int i = 0; i < di->size; i+= sizeof(dirent_t)) {
     inode_read(di, (char*) dirs, sizeof(dirent_t), i);
     // 
-    if (strncmp(name, dirs->name) == 0) {
+    if (strncmp(name, dirs->name, 128) == 0) {
       free_inode(dirs[i]->inum);
       // move the following entries forwards by one spoti
       int remaining_space = di->size - (i * sizeof(dirent_t));
