@@ -16,10 +16,11 @@ inode_t *get_inode(int inum) {
   return ((inode_t*) blocks_get_block(block_num))[inum_in_block];
 }
 
-int alloc_inode() {
+int alloc_inode(int mode) {
   int inum = first_free_inode();
-  inode_t new_node = get_inode(inum);
-  new_node.block[0] = alloc_block();
+  inode_t* new_node = get_inode(inum);
+  new_node->block[0] = alloc_block();
+  new_node->mode = mode;
   return inum;
 }
 

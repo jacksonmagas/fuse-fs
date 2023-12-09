@@ -32,9 +32,10 @@ void print_inode(inode_t *node);
 // returns: a pointer to the inode
 inode_t *get_inode(int inum);
 
-// allocate a new inode
+// allocate a new inode with the given mode
+// param mode: the mode_t for file vs directory and perms
 // returns: the inode number or -1 if allocation fails
-int alloc_inode();
+int alloc_inode(int mode);
 
 // free the inode with the given number
 void free_inode(int inum);

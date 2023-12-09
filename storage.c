@@ -94,7 +94,8 @@ int storage_mknod(const char *path, int mode) {
     inode* new_inode = get_inode(new_inode);
     node->refs = 1;
     new_inode->mode = mode;
-    directory_put(parent_dir, item, new_inode);
+
+    directory_put(dir_inode, filename);
     
     free(dir);
     free(filename);
@@ -134,8 +135,7 @@ int storage_link(const char *from, const char *to) {
     iso_filename(dir, filename);
 
     int dir_inum = 0 // lookup(dir)
-    inode *dir_inode = get_inode(dir_inum);
-    int ret = directory_put(dir_inode, filename, inum);
+    int ret = directory_put(dir_inum, filename);
 
     free(dir);
     free(filename);
