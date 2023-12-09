@@ -4,7 +4,7 @@
 #include <string.h>
 #include "inode.h"
 #include "directory.h"
-#include "helpers/blocks.h"
+#include "blocks.h"
 
 // Initialize the storage for the file system
 void storage_init(const char *path) {

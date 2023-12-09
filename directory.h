@@ -9,7 +9,7 @@
 #define DIR_NAME_LENGTH 128
 
 #include "inode.h"
-#include "helpers/slist.h"
+#include "slist.h"
 
 // directory entry
 typedef struct direntry {

@@ -3,7 +3,7 @@
 #include "inode.h"
 #include <stdio.h>
 #include <string.h>
-#include "helpers/bitmap.h"
+#include "bitmap.h"
 #include <assert.h>
 
 // get the inode number of the first free inode

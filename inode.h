@@ -6,11 +6,11 @@
 #ifndef INODE_H
 #define INODE_H
 
-#include "helpers/blocks.h"
+#include "blocks.h"
 #include <time.h>
 #include <stdlib.h>
 
-const int NUM_INODE_BLOCKS = 3;
+#define NUM_INODE_BLOCKS 3
 #define NUM_DIRECT_BLOCKS 12
 
 typedef struct inode {

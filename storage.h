@@ -11,8 +11,7 @@
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
-
-#include "helpers/slist.h"
+#include "slist.h"
 
 // initialize the file system at the given file path
 // param path: the file path as a string
