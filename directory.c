@@ -52,6 +52,7 @@ int directory_delete(inode_t *di, const char *name) {
 
   for (int i = 0; i < di->size / sizeof(dirent); i++) {
     if (strncmp(name, dirs[i].name) == 0) {
+      free_inode(dirs[i].inum);
       memcpy(&dirs[i], &dirs[i + 1], 4096 - (i + 1) * sizeof(dirent));
       return 0;
     }
