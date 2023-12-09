@@ -3,19 +3,28 @@
 #include "inode.h"
 #include <stdio.h>
 #include <string.h>
+#include "helpers/bitmap.h"
+#include <assert.h>
+
+// get the inode number of the first free inode
+int first_free_inode();
 
 void print_inode(inode_t *node) {
-  printf("Inode %p: number of references = %d, mode = %d, size = %d, block numbes = %d",
-         node, node->refs, node->mode, node->size, node->block);
+  printf("Inode %p: number of references = %d, mode = %d, size = %d, blocks: ",
+         node, node->refs, node->mode, node->size);
+  for (int i = 0; i < node->num_blocks; i++) {
+    printf(", %d", node->block[i]);
+  }
 }
 
 inode_t *get_inode(int inum) {
   int block_num = 1 + inum / (BLOCK_SIZE / sizeof(inode_t));
   int inum_in_block =  inum % (BLOCK_SIZE / sizeof(inode_t));
-  assert(block_num > 0 && block_num <= NUM_INODE_BLOCKS);i
+  assert(block_num > 0 && block_num <= NUM_INODE_BLOCKS);
   // get the block of the inode and then get the inode in the block
-  return ((inode_t*) blocks_get_block(block_num))[inum_in_block];
+  return &((inode_t*) blocks_get_block(block_num))[inum_in_block];
 }
+
 
 int alloc_inode(int mode) {
   int inum = first_free_inode();
@@ -39,9 +48,9 @@ int first_free_inode() {
 
 // decrease reference count
 void free_inode(int inum) {
-  inode_t node = get_inode(inum);
+  inode_t node = *get_inode(inum);
   if (node.refs > 1) {
-    nodes.refs--;
+    node.refs--;
     return;
   } else {
     node.refs = 0;
@@ -49,8 +58,8 @@ void free_inode(int inum) {
     node.size = 0;
     node.indirect_block = -1; 
     for (int i = 0; i < NUM_DIRECT_BLOCKS; i++) {
-      free_block(new_node.block[i]);
-      new_node.block[i] = -1;
+      free_block(node.block[i]);
+      node.block[i] = -1;
     }
   }
 }
@@ -60,7 +69,7 @@ int grow_inode(inode_t *node, int size) {
   if (space_remaining >= size) {
     node->size += size;
   } else {
-    int next_block = alloc_block()
+    int next_block = alloc_block();
     if (next_block < 0) {
       return -1;
     }
@@ -68,7 +77,7 @@ int grow_inode(inode_t *node, int size) {
       // allocate normal block
       node->size += size;
       node->num_blocks++;
-      node->block[num_blocks] = next_block;
+      node->block[node->num_blocks] = next_block;
     } else {
       if (node->num_blocks == NUM_DIRECT_BLOCKS) {
         // allocate indirect block with all blocks as -1
@@ -82,7 +91,7 @@ int grow_inode(inode_t *node, int size) {
         }
       }
       // allocate new block in indirect block
-      ((int*) blocks_get_block(node->indirect_block))[num_blocks - NUM_DIRECT_BLOCKS] = next_block;
+      ((int*) blocks_get_block(node->indirect_block))[node->num_blocks - NUM_DIRECT_BLOCKS] = next_block;
       node->num_blocks++;
       node->size += size;
     }
@@ -122,7 +131,7 @@ int shrink_inode(inode_t *node, int size) {
 }
 
 int inode_get_bnum(inode_t *node, int file_bnum) {
-  if (file_bnum >= num_blocks) {
+  if (file_bnum >= node->num_blocks) {
     return -1;
   }
   if (file_bnum <= NUM_DIRECT_BLOCKS) {
