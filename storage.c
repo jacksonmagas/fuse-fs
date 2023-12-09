@@ -1,4 +1,4 @@
-//Implementation of disc storage, including creation of bitmaps and inode table
+//Implementation of disc storage, including creation of bitmaps and inode_t table
 
 #include "storage.h"
 #include "inode.h"
@@ -10,12 +10,12 @@ void storage_init(const char *path) {
   // Initialize the data blocks
   blocks_init(path);   
 
-  // Permanently set aside 3 data blocks for inodes
+  // Permanently set aside 3 data blocks for inode_ts
   for (int i = 0; i < NUM_INODE_BLOCKS; i++) {
     int perm_block = alloc_block();
   }
 
-  // allocate inode for root by giving it a non-existant parent
+  // allocate inode_t for root by giving it a non-existant parent
   directory_init(-1);
 }
 
@@ -24,7 +24,7 @@ void storage_init(const char *path) {
 int get_inum(const char *path) {
   // start from root directory which is inum 0
   int inum = 0;
-  slist_t *split_path = directory_split(path, "/");
+  slist_t *split_path = directory_list(path);
   
   while (split_path != NULL) {
     inum = directory_lookup(get_inode(inum), split_path->data);
@@ -32,7 +32,7 @@ int get_inum(const char *path) {
       s_free(split_path);
       return -1;
     }
-    inum = inum->next;
+    split_path = split_path->next;
   }
 
   s_free(split_path);
@@ -43,7 +43,7 @@ int get_inum(const char *path) {
 int storage_stat(const char *path, struct stat *st) {
   int path_inum = get_inum(path);
   if (path_inum > 0) {
-    inode *path_inode = get_inode(path_inum);
+    inode_t *path_inode = get_inode(path_inum);
     st->st_ino = path_inum;
     st->st_mode = path_inode->mode;
     st->st_nlink = path_inode->refs;
@@ -63,14 +63,14 @@ int storage_read(const char *path, char *buf, size_t n, size_t size, off_t offse
 // Write the specified number of bytes from the given offset in the file at path to the buffer
 int storage_write(const char *path, const char *buf, size_t n, off_t offset) {
   int path_inum = get_inum(path);
-  return inode_write(path_inum, buf, n, size, offset);
+  return inode_write(path_inum, buf, n, offset);
 }
 
 // truncate the file at the given path by the given offset
 int storage_truncate(const char *path, off_t size) {
   int path_inum = get_inum(path);
   if (path_inum > 0) {
-    inode *path_inode = get_inode(path_inum);
+    inode_t *path_inode = get_inode(path_inum);
 
     if (path_inode->size > size){
 	shrink_inode(path_inode, size);
@@ -122,7 +122,7 @@ int storage_unlink(const char *path) {
     iso_filename(dir, filename);
 
     int dir_inum = get_inum(dir);
-    inode *dir_inode = get_inode(dir_inum);
+    inode_t *dir_inode = get_inode(dir_inum);
     int ret = directory_delete(dir_inode, filename);
 
     free(dir);
@@ -142,7 +142,7 @@ int storage_link(const char *from, const char *to) {
     iso_filename(dir, filename);
 
     int dir_inum = get_inum(dir);
-    inode *dir_inode = get_inode(dir_inum);
+    inode_t *dir_inode = get_inode(dir_inum);
     int ret = directory_link(dir_inode, filename, to_inum);
 
     free(dir);
@@ -171,6 +171,7 @@ int storage_set_time(const char *path, const struct timespec ts[2]) {
   int path_inum = get_inum(path);
   if (path_inum > 0) {
     inode_t *path_inode = get_inode(path_inum);
+    inode_t *path_inode = get_inode(inum);
     path_inode->access_time = ts[0];
     path_inode->modification_time = ts[1];
     
