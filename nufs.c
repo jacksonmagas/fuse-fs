@@ -9,12 +9,13 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include "storage.h"
-#include "directory.h"
-#include "inode.h"
 
 #define FUSE_USE_VERSION 26
 #include <fuse.h>
+
+#include "storage.h"
+#include "directory.h"
+#include "inode.h"
 
 // implementation for: man 2 access
 // Checks if a file exists.
@@ -43,12 +44,12 @@ int nufs_getattr(const char *path, struct stat *st) {
 int nufs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                  off_t offset, struct fuse_file_info *fi) {
   struct stat st;
-  int rv = 0;
+  int rv = get_inum(path);
   // if inode exists and the mode is a directory
-  if (get_inum(path) >= 0 && get_inode(get_inum(path))->mode & 040000) {
-    print_directory(get_inum(path));
+  if (rv >= 0 && get_inode(rv)->mode & 040000) {
+    directory_readdir(rv, buf, filler, offset);
   } else {
-    rv = -1;
+    rv = -ENOENT;
   } 
 
   printf("readdir(%s) -> %d\n", path, rv);

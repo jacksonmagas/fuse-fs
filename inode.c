@@ -1,5 +1,6 @@
 // Inode manipulation functions
 
+#include <errno.h>
 #include "inode.h"
 #include <stdio.h>
 #include <string.h>
@@ -18,11 +19,14 @@ void print_inode(inode_t *node) {
 }
 
 inode_t *get_inode(int inum) {
+  printf("get inode number %d\n", inum);
   int block_num = 1 + inum / (BLOCK_SIZE / sizeof(inode_t));
   int inum_in_block =  inum % (BLOCK_SIZE / sizeof(inode_t));
   assert(block_num > 0 && block_num <= NUM_INODE_BLOCKS + 1);
   // get the block of the inode and then get the inode in the block
-  return &((inode_t*) blocks_get_block(block_num))[inum_in_block];
+  inode_t* node = &((inode_t*) blocks_get_block(block_num))[inum_in_block];
+  print_inode(node);
+  return node;
 }
 
 
@@ -156,7 +160,7 @@ int inode_get_bnum(inode_t *node, int file_bnum) {
 }
 
 int inode_read(int inum, char* buf, int n, int size, int offset) {
-  if (inum > 0) {
+  if (inum >= 0 && bitmap_get(get_inode_bitmap(), inum)) {
     inode_t *inode = get_inode(inum);
     // truncate number of bytes to read to buffer size
     n = n > size ? size : n;
@@ -182,20 +186,20 @@ int inode_read(int inum, char* buf, int n, int size, int offset) {
       
       memcpy(buf + bytes_read, read_p + char_offset, bytes_to_copy);
       char_offset = 0;
-      bytes_read = bytes_to_copy;
+      bytes_read += bytes_to_copy;
     }
-    return 0;
+    return bytes_read;
   }
 
-  return -1;
+  return -ENOENT;
 }
 
 int inode_write(int inum, const char* buf, int n, int offset) {
-  if (inum > 0) {
+  if (inum >= 0 && bitmap_get(get_inode_bitmap(), inum)) {
     inode_t *inode = get_inode(inum);
     // ensure node is large enouge for the write
     if (inode->size < offset + n) {
-      grow_inode(inode, inode->size - offset - n);
+      grow_inode(inode, offset + n - inode->size);
     }
     int bytes_written = 0;
     // get offset within block
@@ -220,10 +224,10 @@ int inode_write(int inum, const char* buf, int n, int offset) {
       
       memcpy(write_ptr + char_offset, buf + bytes_written, bytes_to_copy);
       char_offset = 0;
-      bytes_written = bytes_to_copy;
+      bytes_written += bytes_to_copy;
     }
-    return 0;
+    return bytes_written;
   }
 
-  return -1;
+  return -ENOENT;
 }

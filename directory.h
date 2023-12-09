@@ -10,6 +10,7 @@
 
 #include "inode.h"
 #include "slist.h"
+#include <fuse.h>
 
 // directory entry
 typedef struct direntry {
@@ -54,5 +55,8 @@ slist_t *directory_list(const char *path);
 
 // print the directory
 void print_directory(int dd);
+
+// call the filler function on each entry in the directory
+void directory_readdir(int dir_inum, void* buf, fuse_fill_dir_t filler, off_t offset);
 
 #endif

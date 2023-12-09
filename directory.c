@@ -1,5 +1,6 @@
 // directory functions
 
+#include <errno.h>
 #include "directory.h"
 #include "bitmap.h"
 #include <stdio.h>
@@ -40,14 +41,15 @@ int directory_link(int di, const char* name, int target) {
     entry->inum = target;
     inode_write(di, (char*) entry, sizeof(dirent_t), get_inode(di)->size);
     free(entry);
+    return target;
   }
-  return -1;
+  return -ENOENT;
 }
 
 // Get the inum of the file or directory with the given name in the given inode
 // empty string returns parent inum
 int directory_lookup(int dir_inum, const char *name) {
-  printf("directory_lookup of %s", name);
+  printf("directory_lookup of %s\n", name);
   inode_t* di = get_inode(dir_inum);
   dirent_t *dirs = blocks_get_block(di->block[0]);
   
@@ -61,7 +63,7 @@ int directory_lookup(int dir_inum, const char *name) {
     }
   }
 
-  return -1;
+  return -ENOENT;
 }
 
 // Delete the directory in the given inode with the given name
@@ -85,7 +87,7 @@ int directory_delete(int di, const char *name) {
     }
   }
   free(dirs);
-  return -1; 
+  return -ENOENT; 
 }
 
 // Get a linked list of the directories on the path
@@ -102,4 +104,23 @@ void print_directory(int dd) {
     printf("%s  ", ((dirent_t*)entry)->name);
   }
   free(entry);
+}
+
+// fill fuse directory
+void directory_readdir(int dir_inum, void* buf, fuse_fill_dir_t filler, off_t offset) {
+  inode_t* di = get_inode(dir_inum);
+  dirent_t* entry = (dirent_t*) malloc(sizeof(dirent_t));
+  struct stat* statbuf = malloc(sizeof(struct stat));
+  for (int i = offset; i < di->size / sizeof(dirent_t); i++) {
+    inode_read(dir_inum, (char*) entry, sizeof(dirent_t), sizeof(dirent_t), i * sizeof(dirent_t));
+    inode_t* node = get_inode(entry->inum);
+    statbuf->st_mode = node->mode;
+    statbuf->st_size = node->size;
+    statbuf->st_nlink = node->refs;
+    statbuf->st_atim = node->access_time;
+    statbuf->st_mtim = node->modification_time;
+    filler(buf, entry->name, statbuf , i + 1);
+  }
+  free(entry);
+  free(statbuf);
 }
