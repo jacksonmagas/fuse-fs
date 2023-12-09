@@ -19,7 +19,7 @@ typedef struct dirent {
 } dirent_t;
 
 // initialize a new directory with . and .. entries
-// param parent: the inode of the parent directory. If parent is null the directory will not have a .. entry.
+// param parent: the inode of the parent directory. If parent is -1 the directory be root
 // returns: the inode number of the directory
 int directory_init(inode_t parent);
 
@@ -30,10 +30,18 @@ int directory_init(inode_t parent);
 int directory_lookup(inode_t *di, const char *name);
 
 // add a new directory entry with the given name in the given directory
-// param di: pointer to the directory inode
+// param di: inode number of the directory
 // param name: the name of the file to add
+// param name: the mode of the new directory object, either directory or file and perms
 // returns the inode number of the new directory if successful and -1 if unsuccessful
-int directory_put(inode_t *di, const char *name);
+int directory_put(inum di, const char *name, int mode);
+
+// add a new hard link with the given name to the given inode
+// param di: the directory to put the link in
+// param name: the name of the hard link
+// param target: the inode number to link to
+// returns: the inode number of the target if it exists, otherwise -1
+int directory_link(inum di, const char *name, inum target);
 
 // delete the directory in the given inode with the given name
 // param di: the directory inode
