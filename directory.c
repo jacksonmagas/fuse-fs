@@ -8,7 +8,7 @@
 
 int directory_init(int parent) {
   printf("allocate inode for new directory with parent %d\n", -1);
-  int inum = alloc_inode(40755);
+  int inum = alloc_inode(040755);
   directory_link(inum, ".", inum);
   // for non-root directories
   if (parent >= 0) {
@@ -19,7 +19,7 @@ int directory_init(int parent) {
 
 int directory_put(int di, const char *name, int mode) {
   int inum;
-  if (mode / 40000 == 1) {
+  if (mode & 040000) {
     // if it is a directory
     inum = directory_init(di);
     get_inode(inum)->mode = mode;

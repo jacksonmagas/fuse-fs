@@ -20,7 +20,8 @@
 // Checks if a file exists.
 int nufs_access(const char *path, int mask) {
   int rv = 0;
-  rv = get_inum(path);
+  struct stat st;
+  rv = storage_stat(path, &st) && st.st_mode & mask;
   printf("access(%s, %04o) -> %d\n", path, mask, rv);
   return rv;
 }
@@ -43,7 +44,8 @@ int nufs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                  off_t offset, struct fuse_file_info *fi) {
   struct stat st;
   int rv = 0;
-  if (get_inum(path) >= 0 && get_inode(get_inum(path))->mode / 40000 == 0) {
+  // if inode exists and the mode is a directory
+  if (get_inum(path) >= 0 && get_inode(get_inum(path))->mode & 040000) {
     print_directory(get_inum(path));
   } else {
     rv = -1;
