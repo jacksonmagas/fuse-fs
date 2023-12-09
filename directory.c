@@ -38,10 +38,9 @@ int directory_lookup(inode_t *di, const char *name) {
   dirent *dirs = blocks_get_block(di->block[0]);
   
   for (int i = 0; i < di->size / sizeof(dirent); i++) {
-    if (strncmp(name, dirs->name)) {
-      return dirs->inum;
+    if (strncmp(name, dirs[i].name) == 0) {
+      return dirs[i].inum;
     }
-    dirs += sizeof(dirent)
   }
 
   return -1;
@@ -49,7 +48,16 @@ int directory_lookup(inode_t *di, const char *name) {
 
 // Delete the directory in the given inode with the given name
 int directory_delete(inode_t *di, const char *name) {
-  
+  dirent *dirs = blocks_get_block(di->block[0]);
+
+  for (int i = 0; i < di->size / sizeof(dirent); i++) {
+    if (strncmp(name, dirs[i].name) == 0) {
+      memcpy(&dirs[i], &dirs[i + 1], 4096 - (i + 1) * sizeof(dirent));
+      return 0;
+    }
+  }
+
+  return -1; 
 }
 
 // Get a linked list of the directories on the path
