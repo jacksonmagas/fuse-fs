@@ -57,4 +57,21 @@ int shrink_inode(inode_t *node, int size);
 // returns: the block number or -1 if out of range
 int inode_get_bnum(inode_t *node, int file_bnum);
 
+// read up to n bytes into a buffer of the given size, starting from offset in the given inode
+// param inum: the inode number to read from
+// param buf: the char buffer to read into
+// param n: the number of bytes to read
+// param size: the size of the buffer to read into
+// param offset: the offset of the buffer
+// returns: 0 if successful or -1 if unsuccessful;
+int inode_read(int inum, const char* buf, int n, int size, int offset);
+
+// write up to n bytes into a buffer of the given size, starting from offset in the given inode
+// param inum: the inode number to write to
+// param buf: the char buffer to write from
+// param n: the number of bytes to write
+// param offset: the offset of the buffer
+// returns: 0 if successful or -1 if unsuccessful;
+int inode_write(int inum, const char* buf, int n, int offset);
+
 #endif

@@ -2,3 +2,6 @@ tags
 print_inode_size
 nufs
 a.out
+*.gch
+*.swp
+*.o

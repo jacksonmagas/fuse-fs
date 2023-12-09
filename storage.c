@@ -33,49 +33,13 @@ int storage_stat(const char *path, struct stat *st) {
 // Read the specified number of bytes from the given offset in the file at path to the buffer
 int storage_read(const char *path, char *buf, size_t n, size_t size, off_t offset) {
   int path_inum = 0; // lookup(path) method to get inum from path
-  if (path_inum > 0) {
-    inode *path_inode = get_inode(path_inum);
-    int i = offset;
-    int amt_done = 0;
-    int amt_left = n;
-    
-
-    while (amt_done < n & amt_done < size) {
-      int read_bnum = inode_get_bnum(inode, offset + amt_done);
-      char *read_p = blocks_get_block(read_bnum);
-      move_p = i % BLOCK_SIZE;
-      read_p += move_p;
-      
-      int amt_doing = 0;
-      if (left < BLOCK_SIZE - move_p) {
-        amt_doing = amt_left;  
-      } else {
-        amt_doing = BLOCK_SIZE - move_p;
-      }
-      
-      memcpy(buf + amt_done, read_p, amt_doing);
-      i = i + doing;
-      amt_done = amt_done + doing;
-      amt_left = amt_left - doing;
-    }
-
-    return 0;
-  }
-
-  return -1;
+  return inode_read(path_inum, buf, n, size, offset);
 }
 
 // Write the specified number of bytes from the given offset in the file at path to the buffer
 int storage_write(const char *path, const char *buf, size_t n, off_t offset) {
   int path_inum = 0; // lookup(path) method to get inum from path
-  int path_truncate = storage_truncate(path, offset + size);
-  if (path_inum > 0 & path_truncate > 0) {
-    inode *path_node = get_inode(path_inum);
-
-    return 0;
-  }
-
-  return -1;
+  return inode_write(path_inum, buf, n, size, offset);
 }
 
 // truncate the file at the given path to the given size
@@ -84,9 +48,7 @@ int storage_truncate(const char *path, off_t size) {
   if (path_inum > 0) {
     inode *path_inode = get_inode(path_inum);
 
-    if (path_inode->size < size) {
-	grow_inode(path_inode, size);
-    } else if (path_inode->size > size){
+    if (path_inode->size > size){
 	shrink_inode(path_inode, size);
     }
 

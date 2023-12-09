@@ -129,3 +129,75 @@ int inode_get_bnum(inode_t *node, int file_bnum) {
     return ((int*) blocks_get_block(node->indirect_block))[file_bnum - NUM_DIRECT_BLOCKS];
   }
 }
+
+int inode_read(int inum, char* buf, int n, int size, int offest) {
+  if (inum > 0) {
+    // truncate number of bytes to read to buffer size
+    n = n > size ? size : n;
+    int bytes_read = 0;
+    // get offset within block
+    int char_offset = offset % BLOCK_SIZE;
+    // while there are more bytes to read
+    while (n > 0) {
+      // get block number to read from
+      int read_bnum = inode_get_bnum(inode, offset + bytes_read);
+      // get pointer to read block
+      char *read_p = blocks_get_block(read_bnum);
+      int bytes_left_in_block = BLOCK_SIZE - char_offset;
+      
+      // if n will fit in the block copy n bytes, otherwise copy the rest of the block
+      int bytes_to_copy;
+      if (n < bytes_left_in_block) {
+        bytes_to_copy = n;
+      } else {
+        bytes_to_copy = bytes_left_in_block;
+        n -= bytes_left_in_block;
+      }
+      
+      memcpy(buf + bytes_read, read_p + char_offset, bytes_to_copy);
+      char_offset = 0;
+      bytes_read = bytes_to_copy;
+    }
+    return 0;
+  }
+
+  return -1;
+}
+
+int inode_write(int inum, char* buf, int n, int offset) {
+  inode_t *node = get_inode(inum);
+  // ensure node is large enouge for the write
+  if (node->size < offset + n) {
+    grow_inode(node, node->size - offset - n);
+  }
+  if (inum > 0) {
+    int bytes_written = 0;
+    // get offset within block
+    int char_offset = offset % BLOCK_SIZE;
+    // while there are more bytes to write
+    while (n > 0) {
+      // get block number to write to
+      int read_bnum = inode_get_bnum(inode, offset + bytes_read);
+      // get pointer to write block
+      char *write_ptr = blocks_get_block(read_bnum);
+      int bytes_left_in_block = BLOCK_SIZE - char_offset;
+
+      // if n will fit in the block copy n bytes, otherwise copy the rest of the block
+      int bytes_to_copy;
+      if (n < bytes_left_in_block) {
+        bytes_to_copy = n;
+        n = 0;
+      } else {
+        bytes_to_copy = bytes_left_in_block;
+        n -= bytes_left_in_block;
+      }
+      
+      memcpy(write_ptr + char_offset, buf + bytes_written, bytes_to_copy);
+      char_offset = 0;
+      bytes_read = bytes_to_copy;
+    }
+    return 0;
+  }
+
+  return -1;
+}
