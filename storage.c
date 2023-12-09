@@ -139,11 +139,10 @@ int storage_link(const char *from, const char *to) {
   if (to_inum > 0) {
     char* dir = malloc(strnlen(from));
     char* filename = malloc(strnlen(128));
-    iso_filename(dir, filename);
+    iso_filename(from, dir, filename);
 
     int dir_inum = get_inum(dir);
-    inode_t *dir_inode = get_inode(dir_inum);
-    int ret = directory_link(dir_inode, filename, to_inum);
+    int ret = directory_link(dir_inum, filename, to_inum);
 
     free(dir);
     free(filename);
@@ -171,7 +170,6 @@ int storage_set_time(const char *path, const struct timespec ts[2]) {
   int path_inum = get_inum(path);
   if (path_inum > 0) {
     inode_t *path_inode = get_inode(path_inum);
-    inode_t *path_inode = get_inode(inum);
     path_inode->access_time = ts[0];
     path_inode->modification_time = ts[1];
     
