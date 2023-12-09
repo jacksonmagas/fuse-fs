@@ -56,19 +56,20 @@ int directory_lookup(inode_t *di, const char *name) {
 }
 
 // Delete the directory in the given inode with the given name
-int directory_delete(inode_t *di, const char *name) {
+int directory_delete(int di, const char *name) {
+  inode_t *dinode = get_inode(di);
   dirent_t* dirs = (dirent_t*) malloc(sizeof(dirent_t));
-  for (int i = 0; i < di->size; i+= sizeof(dirent_t)) {
+  for (int i = 0; i < dinode->size; i+= sizeof(dirent_t)) {
     inode_read(di, (char*) dirs, sizeof(dirent_t), i);
     // 
     if (strncmp(name, dirs->name, 128) == 0) {
       free_inode(dirs[i]->inum);
       // move the following entries forwards by one spoti
-      int remaining_space = di->size - (i * sizeof(dirent_t));
+      int remaining_space = dinode->size - (i * sizeof(dirent_t));
       char* following_entries = malloc(remaining_space);
       inode_read(di, (char*) following_entries, remaining_space, remaining_space, i + sizeof(diernt_t));
       inode_write(di, (char*) following_entries, remaining_space, remaining_space, i);
-      shrink_inode(di, sizeof(dirent_t));
+      shrink_inode(dinode, sizeof(dirent_t);
       free(following_entries);
       free(dirs);
       return 0;
@@ -84,7 +85,7 @@ slist_t *directory_list(const char *path) {
 }
 
 // print the directory element names with 2 spaces between them 
-void print_directory(inum dd) {
+void print_directory(int dd) {
   int size = get_inode(dd)->size;
   char* entry = (char*) malloc(sizeof(dirent_t));
   for (int i = 0; i < size; i += sizeof(dirent_t)) {
