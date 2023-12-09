@@ -20,7 +20,7 @@ void print_inode(inode_t *node) {
 inode_t *get_inode(int inum) {
   int block_num = 1 + inum / (BLOCK_SIZE / sizeof(inode_t));
   int inum_in_block =  inum % (BLOCK_SIZE / sizeof(inode_t));
-  assert(block_num > 0 && block_num <= NUM_INODE_BLOCKS);
+  assert(block_num > 0 && block_num <= NUM_INODE_BLOCKS + 1);
   // get the block of the inode and then get the inode in the block
   return &((inode_t*) blocks_get_block(block_num))[inum_in_block];
 }
@@ -37,13 +37,13 @@ int alloc_inode(int mode) {
 // returns in inum of the first free inode, and -1 if there are no free inodes
 int first_free_inode() {
   void* inode_bitmap = get_inode_bitmap;
-  int inum = -1;
   // loop over each inode in the bitmap
   for (int i = 0; i < (BLOCK_SIZE / sizeof(inode_t)) * NUM_INODE_BLOCKS; i++) {
     if (!bitmap_get(inode_bitmap, i)) {
-      inum = i;
+       return i;
     }
   }
+  return -1;
 }
 
 // decrease reference count

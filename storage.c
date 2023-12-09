@@ -15,7 +15,7 @@ void storage_init(const char *path) {
   for (int i = 0; i < NUM_INODE_BLOCKS; i++) {
     int perm_block = alloc_block();
   }
-
+  printf("allocate root");
   // allocate inode_t for root by giving it a non-existant parent
   directory_init(-1);
 }
@@ -23,6 +23,11 @@ void storage_init(const char *path) {
 
 // Get the inum at a given path
 int get_inum(const char *path) {
+  printf("get_inum of %s", path);
+  if (strcmp(path, "\\")) {
+    printf(" = %d\n", 0);
+    return 0;
+  }
   // start from root directory which is inum 0
   int inum = 0;
   slist_t *split_path = directory_list(path);
@@ -31,6 +36,7 @@ int get_inum(const char *path) {
     inum = directory_lookup(get_inode(inum), split_path->data);
     if (inum < 0) {
       s_free(split_path);
+      printf(" = %d\n. %s not found or parent not a dir", -1, split_path->data);
       return -1;
     }
     split_path = split_path->next;
@@ -42,8 +48,9 @@ int get_inum(const char *path) {
 
 // Get the file information for the file at the specified path
 int storage_stat(const char *path, struct stat *st) {
+  printf("storage_stat -> ");
   int path_inum = get_inum(path);
-  if (path_inum > 0) {
+  if (path_inum >= 0) {
     inode_t *path_inode = get_inode(path_inum);
     st->st_ino = path_inum;
     st->st_mode = path_inode->mode;
@@ -70,7 +77,7 @@ int storage_write(const char *path, const char *buf, size_t n, off_t offset) {
 // truncate the file at the given path by the given offset
 int storage_truncate(const char *path, off_t size) {
   int path_inum = get_inum(path);
-  if (path_inum > 0) {
+  if (path_inum >= 0) {
     inode_t *path_inode = get_inode(path_inum);
 
     if (path_inode->size > size){
@@ -117,7 +124,7 @@ int storage_mknod(const char *path, int mode) {
 // Remove the file or directory at the given path
 int storage_unlink(const char *path) {
   int path_inum = get_inum(path);
-  if (path_inum > 0) {
+  if (path_inum >= 0) {
     char* dir = malloc(strnlen(path, 256));
     char* filename = malloc(strnlen(path, 256));
     iso_filename(path, dir, filename);
@@ -136,6 +143,7 @@ int storage_unlink(const char *path) {
 // Create a new hard link from the source path to the destination path
 int storage_link(const char *from, const char *to) {
   int to_inum = get_inum(to);
+  // no need to support linking inode 0 because you shouldn't be linking root to something else
   if (to_inum > 0) {
 
     char* dir = malloc(strnlen(from, 128));
