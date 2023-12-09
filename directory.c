@@ -32,6 +32,7 @@ int directory_put(int di, const char *name, int mode) {
 
 // directory inodes store the bits
 int directory_link(int di, const char* name, int target) {
+
   printf("link name %s to inode %d in directory %d\n", name, target, di);
   void* bmap = get_inode_bitmap();
   if (bitmap_get(bmap, target)) {

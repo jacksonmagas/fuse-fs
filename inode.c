@@ -19,13 +19,13 @@ void print_inode(inode_t *node) {
 }
 
 inode_t *get_inode(int inum) {
-  printf("get inode number %d\n", inum);
+  //printf("get inode number %d\n", inum);
   int block_num = 1 + inum / (BLOCK_SIZE / sizeof(inode_t));
   int inum_in_block =  inum % (BLOCK_SIZE / sizeof(inode_t));
   assert(block_num > 0 && block_num <= NUM_INODE_BLOCKS + 1);
   // get the block of the inode and then get the inode in the block
   inode_t* node = &((inode_t*) blocks_get_block(block_num))[inum_in_block];
-  print_inode(node);
+  //print_inode(node);
   return node;
 }
 
@@ -179,6 +179,7 @@ int inode_read(int inum, char* buf, int n, int size, int offset) {
       int bytes_to_copy;
       if (n < bytes_left_in_block) {
         bytes_to_copy = n;
+        n = 0;
       } else {
         bytes_to_copy = bytes_left_in_block;
         n -= bytes_left_in_block;
