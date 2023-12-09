@@ -2,6 +2,7 @@
 
 #include "inode.h"
 #include <stdio.h>
+#include <string.h>
 
 void print_inode(inode_t *node) {
   printf("Inode %p: number of references = %d, mode = %d, size = %d, block numbes = %d",
@@ -131,8 +132,9 @@ int inode_get_bnum(inode_t *node, int file_bnum) {
   }
 }
 
-int inode_read(int inum, char* buf, int n, int size, int offest) {
+int inode_read(int inum, char* buf, int n, int size, int offset) {
   if (inum > 0) {
+    inode_t *inode = get_inode(inum);
     // truncate number of bytes to read to buffer size
     n = n > size ? size : n;
     int bytes_read = 0;
@@ -165,20 +167,20 @@ int inode_read(int inum, char* buf, int n, int size, int offest) {
   return -1;
 }
 
-int inode_write(int inum, char* buf, int n, int offset) {
-  inode_t *node = get_inode(inum);
-  // ensure node is large enouge for the write
-  if (node->size < offset + n) {
-    grow_inode(node, node->size - offset - n);
-  }
+int inode_write(int inum, const char* buf, int n, int offset) {
   if (inum > 0) {
+    inode_t *inode = get_inode(inum);
+    // ensure node is large enouge for the write
+    if (inode->size < offset + n) {
+      grow_inode(inode, inode->size - offset - n);
+    }
     int bytes_written = 0;
     // get offset within block
     int char_offset = offset % BLOCK_SIZE;
     // while there are more bytes to write
     while (n > 0) {
       // get block number to write to
-      int read_bnum = inode_get_bnum(inode, offset + bytes_read);
+      int read_bnum = inode_get_bnum(inode, offset + bytes_written);
       // get pointer to write block
       char *write_ptr = blocks_get_block(read_bnum);
       int bytes_left_in_block = BLOCK_SIZE - char_offset;
@@ -195,7 +197,7 @@ int inode_write(int inum, char* buf, int n, int offset) {
       
       memcpy(write_ptr + char_offset, buf + bytes_written, bytes_to_copy);
       char_offset = 0;
-      bytes_read = bytes_to_copy;
+      bytes_written = bytes_to_copy;
     }
     return 0;
   }
