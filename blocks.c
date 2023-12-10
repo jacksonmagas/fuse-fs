@@ -78,8 +78,8 @@ void *blocks_get_block(int bnum) {
 // The size is BLOCK_BITMAP_SIZE bytes.
 void *get_blocks_bitmap() {
   void* bbm = blocks_get_block(0);
-  printf("get_blocks_bitmap called with bitmap: \n");
-  bitmap_print(bbm, BLOCK_COUNT);
+  //printf("get_blocks_bitmap called with bitmap: \n");
+  //bitmap_print(bbm, BLOCK_COUNT);
   return bbm;
 }
 
@@ -87,8 +87,8 @@ void *get_blocks_bitmap() {
 void *get_inode_bitmap() {
   uint8_t *block = blocks_get_block(0);
   void* ibm = (void*) (block + BLOCK_BITMAP_SIZE);
-  printf("get_inode_bitmap called with bitmap: \n");
-  bitmap_print(ibm, INODE_COUNT);
+  //printf("get_inode_bitmap called with bitmap: \n");
+  //bitmap_print(ibm, INODE_COUNT);
   // The inode bitmap is stored immediately after the block bitmap
   return ibm;
 }

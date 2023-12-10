@@ -32,9 +32,9 @@ void storage_init(const char *path) {
 
 // Get the inum at a given path
 int get_inum(const char *path) {
-  printf("get_inum of %s", path);
+  //printf("get_inum of %s", path);
   if (strncmp(path, "/", 4) == 0) {
-    printf(" = 0\n");
+    //printf(" = 0\n");
     return 0;
   }
   // start from root directory which is inum 0
@@ -45,20 +45,19 @@ int get_inum(const char *path) {
   while (split_path != NULL) {
     inum = directory_lookup(inum, split_path->data);
     if (inum < 0) {
-      printf(" = %d. %s not found or parent not a dir\n", -1, split_path->data);
+      printf("%s not found or parent not a dir\n", path);
       s_free(whole_list);
       return -ENOENT;
     }
     split_path = split_path->next;
   }
-  printf(" inum = %d\n", inum);
+  //printf(" inum = %d\n", inum);
   s_free(whole_list);
   return inum;
 }
 
 // Get the file information for the file at the specified path
 int storage_stat(const char *path, struct stat *st) {
-  printf("storage_stat -> ");
   int path_inum = get_inum(path);
   if (path_inum >= 0) {
     inode_t *path_inode = get_inode(path_inum);
@@ -109,10 +108,11 @@ int storage_truncate(const char *path, off_t size) {
 // param filename: the output buffer for file name
 void iso_filename(const char *path, char *dir_path, char *filename) {
     slist_t *split_path = directory_list(path);
-
+    memset(dir_path, 0, strnlen(path, 256));
+    memset(filename, 0, strnlen(path, 256));
     while (split_path->next != NULL) {
-        char *add_string = strncat("/", split_path->data, 128);
-        strncat(dir_path, add_string, 129);
+        strncat(dir_path, "/", 256);
+        strncat(dir_path, split_path->data, 256);
         split_path = split_path->next;
     }
 
@@ -132,7 +132,7 @@ int storage_mknod(const char *path, int mode) {
   int result = directory_put(parent, filename, mode);
   free(parent_path);
   free(filename);
-  return result;
+  return result > 0 ? 0 : result;
 }
 
 // Remove the file or directory at the given path
@@ -182,7 +182,7 @@ int storage_rename(const char *from, const char *to) {
   printf("storage_rename %s to %s\n", from, to);
   int from_inum = get_inum(from);
   if (from_inum > 0) {
-    storage_link(from, to);
+    storage_link(to, from);
     storage_unlink(from);
     
     return 0;

@@ -53,11 +53,11 @@ int grow_inode(inode_t *node, int size);
 // returns: 0 if successful, -1 if unsuccessful
 int shrink_inode(inode_t *node, int size);
 
-// get the on disc block number of the file block number in the given inode
+// get the on disc block number of the given inode at the given offset
 // parameter node: a pointer to the input inode
-// parameter file_bnum: the 0 indexed block number within the file to get, for example reading from the 6000th character with block size of 4K would have file_bnum be 1 
+// parameter file_bnum: the offset in bytes to find the block of 
 // returns: the block number or -1 if out of range
-int inode_get_bnum(inode_t *node, int file_bnum);
+int inode_get_bnum(inode_t *node, int offset);
 
 // read up to n bytes into a buffer of the given size, starting from offset in the given inode
 // param inum: the inode number to read from

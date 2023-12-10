@@ -7,6 +7,7 @@ use IO::Handle;
 
 sub mount {
     system("(make mount 2>&1) >> test.log &");
+    #system("(make gdb)");
     sleep 1;
 }
 
@@ -129,6 +130,7 @@ my $msg5 = read_text("tmp/file.txt");
 ok($msg4 eq $msg5, "Read data back correctly");
 system("mv mnt/tmp/file.txt mnt/foo");
 ok(-e "mnt/foo/file.txt", "Move a file to another directory");
+system("(echo SEARCH_FOR_THIS_IN_LOG) >> test.log");
 my $msg6 = read_text("foo/file.txt");
 ok($msg4 eq $msg6, "Read data back correctly");
 

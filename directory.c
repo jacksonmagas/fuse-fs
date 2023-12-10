@@ -11,6 +11,8 @@ int directory_init(int parent) {
   printf("allocate inode for new directory with parent %d\n", -1);
   int inum = alloc_inode(040755);
   directory_link(inum, ".", inum);
+  // decrement the reference counter to compensate for the extra reference of .
+  get_inode(inum)->refs--;
   // for non-root directories
   if (parent >= 0) {
     directory_link(inum, "..", parent);
@@ -32,7 +34,10 @@ int directory_put(int di, const char *name, int mode) {
 
 // directory inodes store the bits
 int directory_link(int di, const char* name, int target) {
-
+  // if there is a directory of the same name return error directory exists
+  if (directory_lookup(di, name) >= 0) {
+    return -EEXIST;
+  }
   printf("link name %s to inode %d in directory %d\n", name, target, di);
   void* bmap = get_inode_bitmap();
   if (bitmap_get(bmap, target)) {
@@ -41,6 +46,7 @@ int directory_link(int di, const char* name, int target) {
     strncpy(entry->name, name, 128);
     entry->inum = target;
     inode_write(di, (char*) entry, sizeof(dirent_t), get_inode(di)->size);
+    get_inode(target)->refs++;
     free(entry);
     return target;
   }
@@ -73,13 +79,15 @@ int directory_delete(int di, const char *name) {
   dirent_t* dirs = (dirent_t*) malloc(sizeof(dirent_t));
   for (int i = 0; i < dinode->size; i+= sizeof(dirent_t)) {
     inode_read(di, (char*) dirs, sizeof(dirent_t), sizeof(dirent_t), i);
-    // 
+    // if the directory entry is the one to delete
     if (strncmp(name, dirs->name, 128) == 0) {
-      free_inode(dirs[i].inum);
+      free_inode(dirs->inum);
       // move the following entries forwards by one spoti
-      int remaining_space = dinode->size - (i * sizeof(dirent_t));
+      int remaining_space = dinode->size - i;
       char* following_entries = malloc(remaining_space);
+      // read from the next dirent into buffer
       inode_read(di, (char*) following_entries, remaining_space, remaining_space, i + sizeof(dirent_t));
+      // write the buffer back in with the offset one less
       inode_write(di, (char*) following_entries, remaining_space, i);
       shrink_inode(dinode, sizeof(dirent_t));
       free(following_entries);

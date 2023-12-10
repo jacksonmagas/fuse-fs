@@ -1,0 +1,239 @@
+make[1]: Entering directory '/home/jackson/cs3650/project-2'
+mkdir -p mnt || true
+./nufs -s -f mnt data.nufs
+TODO: mount data.nufs as data file
+initialize storage with data.nufs as data file+ alloc_block() -> 1
++ alloc_block() -> 2
++ alloc_block() -> 3
+allocate rootallocate inode for new directory with parent -1
++ alloc_block() -> 4
+directory_lookup of .
+link name . to inode 0 in directory 0
+access(/, 0004) -> 0
+directory_lookup of 
+directory_lookup of .Trash
+/.Trash not found or parent not a dir
+getattr(/.Trash) -> (-2) {mode: 0000, size: 0}
+directory_lookup of 
+directory_lookup of .Trash-1000
+/.Trash-1000 not found or parent not a dir
+getattr(/.Trash-1000) -> (-2) {mode: 0000, size: 0}
+directory_lookup of 
+directory_lookup of .xdg-volume-info
+/.xdg-volume-info not found or parent not a dir
+getattr(/.xdg-volume-info) -> (-2) {mode: 0000, size: 0}
+directory_lookup of 
+directory_lookup of autorun.inf
+/autorun.inf not found or parent not a dir
+getattr(/autorun.inf) -> (-2) {mode: 0000, size: 0}
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+getattr(/) -> (0) {mode: 40755, size: 144}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.readdir(/) -> 0
+readdir(/) -> 0
+directory_lookup of 
+directory_lookup of autorun.inf
+/autorun.inf not found or parent not a dir
+getattr(/autorun.inf) -> (-2) {mode: 0000, size: 0}
+directory_lookup of 
+directory_lookup of large.txt
+/large.txt not found or parent not a dir
+getattr(/large.txt) -> (-2) {mode: 0000, size: 0}
+Storage_mknod at /large.txt, with mode 100664
++ alloc_block() -> 5
+directory_lookup of large.txt
+link name large.txt to inode 1 in directory 0
+mknod(/large.txt, 100664) -> 0
+directory_lookup of 
+directory_lookup of large.txt
+getattr(/large.txt) -> (0) {mode: 100664, size: 0}
+directory_lookup of 
+directory_lookup of large.txt
+open(/large.txt) -> 1
+ioctl(/large.txt, 21505, ...) -> -1
+Storage_write 4096 bytes to /large.txt at offset 0directory_lookup of 
+directory_lookup of large.txt
+write(/large.txt, 4096 bytes, @+0) -> 4096
+Storage_write 2049 bytes to /large.txt at offset 4096directory_lookup of 
+directory_lookup of large.txt
++ alloc_block() -> 6
+write(/large.txt, 2049 bytes, @+4096) -> 2049
+directory_lookup of 
+directory_lookup of large.txt
+getattr(/large.txt) -> (0) {mode: 100664, size: 6145}
+getattr(/) -> (0) {mode: 40755, size: 288}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.144 blocks to read
+copying 144 bytes from block 4 with offset 144.readdir(/) -> 0
+readdir(/) -> 0
+directory_lookup of 
+directory_lookup of large.txt
+open(/large.txt) -> 1
+ioctl(/large.txt, 21505, ...) -> -1
+Storage_read 8192 bytes from /large.txt at offset 0
+directory_lookup of 
+directory_lookup of large.txt
+6145 blocks to read
+copying 4096 bytes from block 5 with offset 0.2049 blocks to read
+copying 2049 bytes from block 6 with offset 0.read(/large.txt, 8192 bytes, @+0) -> 6145
+directory_lookup of 
+directory_lookup of larger.txt
+/larger.txt not found or parent not a dir
+getattr(/larger.txt) -> (-2) {mode: 0000, size: 0}
+Storage_mknod at /larger.txt, with mode 100664
++ alloc_block() -> 7
+directory_lookup of larger.txt
+link name larger.txt to inode 2 in directory 0
+mknod(/larger.txt, 100664) -> 0
+directory_lookup of 
+directory_lookup of larger.txt
+getattr(/larger.txt) -> (0) {mode: 100664, size: 0}
+directory_lookup of 
+directory_lookup of larger.txt
+open(/larger.txt) -> 2
+ioctl(/larger.txt, 21505, ...) -> -1
+Storage_write 4096 bytes to /larger.txt at offset 0directory_lookup of 
+directory_lookup of larger.txt
+write(/larger.txt, 4096 bytes, @+0) -> 4096
+Storage_write 4096 bytes to /larger.txt at offset 4096directory_lookup of 
+directory_lookup of larger.txt
++ alloc_block() -> 8
+write(/larger.txt, 4096 bytes, @+4096) -> 4096
+directory_lookup of 
+directory_lookup of larger.txt
+getattr(/larger.txt) -> (0) {mode: 100664, size: 8192}
+Storage_write 4096 bytes to /larger.txt at offset 8192directory_lookup of 
+directory_lookup of larger.txt
++ alloc_block() -> 9
+write(/larger.txt, 4096 bytes, @+8192) -> 4096
+Storage_write 2049 bytes to /larger.txt at offset 12288directory_lookup of 
+directory_lookup of larger.txt
++ alloc_block() -> 10
+write(/larger.txt, 2049 bytes, @+12288) -> 2049
+directory_lookup of 
+directory_lookup of larger.txt
+getattr(/larger.txt) -> (0) {mode: 100664, size: 14337}
+getattr(/) -> (0) {mode: 40755, size: 432}
+144 blocks to read
+copying 144 bytes from block 4 with offset 0.144 blocks to read
+copying 144 bytes from block 4 with offset 144.144 blocks to read
+copying 144 bytes from block 4 with offset 288.readdir(/) -> 0
+readdir(/) -> 0
+directory_lookup of 
+directory_lookup of larger.txt
+getattr(/larger.txt) -> (0) {mode: 100664, size: 14337}
+directory_lookup of 
+directory_lookup of larger.txt
+open(/larger.txt) -> 2
+ioctl(/larger.txt, 21505, ...) -> -1
+Storage_read 16384 bytes from /larger.txt at offset 0
+directory_lookup of 
+dmake[1]: Entering directory '/home/jackson/cs3650/project-2'
+fusermount -u mnt || true
+irectory_lookup of larger.txt
+14337 blocks to read
+copying 4096 bytes from block 7 with offset 0.10241 blocks to read
+copying 4096 bytes from block 8 with offset 0.6145 blocks to read
+copying 4096 bytes from block 9 with offset 0.2049 blocks to read
+copying 2049 bytes from block 10 with offset 0.read(/larger.txt, 16384 bytes, @+0) -> 14337
+make[1]: Leaving directory '/home/jackson/cs3650/project-2'
+make[1]: Leaving directory '/home/jackson/cs3650/project-2'

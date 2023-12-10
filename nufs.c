@@ -130,7 +130,7 @@ int nufs_open(const char *path, struct fuse_file_info *fi) {
   int rv = 0;
   rv = get_inum(path);
   printf("open(%s) -> %d\n", path, rv);
-  return rv;
+  return rv > 0 ? 0 : -1;
 }
 
 // Actually read data
