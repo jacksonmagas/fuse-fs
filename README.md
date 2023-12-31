@@ -3,3 +3,4 @@
 This was the final project for my computer systems class, implementing a file system in userspace in C using the FUSE API.
 
 
+This project was written in collaboration with Ben Aranow.
